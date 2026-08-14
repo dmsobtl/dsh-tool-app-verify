@@ -1,37 +1,47 @@
+import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { AppSession } from '../session.ts'
 
-export const accessibilityTool = (session: AppSession) => ({
+export const accessibilityTool = (session: AppSession) => defineTool({
   name: 'app_accessibility',
   description: 'Get the accessibility tree snapshot of the current page. Returns a structured tree of roles, names, and values — useful for understanding page structure without screenshots.',
   parameters: {
-    type: 'object' as const,
-    properties: {
-      selector: { type: 'string' as const, description: 'Optional: scope the tree to a specific element (CSS selector). Omit for full page.' },
-    },
+    selector: { type: 'string', description: 'Optional: scope the tree to a specific element (CSS selector). Omit for full page.' },
   },
-  async execute(args: { selector?: string }) {
+  output: {
+    schema: { type: 'string' },
+    render: (_args, value) => [{ type: 'text', text: value }],
+  },
+  async execute(args) {
     const page = await session.getPage()
 
-    let root: any = undefined
+    let root: unknown = undefined
     if (args.selector) {
       const el = await page.$(args.selector)
-      if (!el) return [{ type: 'text' as const, text: `Element not found: ${args.selector}` }]
+      if (!el) return `Element not found: ${args.selector}`
       root = el
     }
 
-    const snapshot = await page.accessibility.snapshot({ root })
-    if (!snapshot) return [{ type: 'text' as const, text: 'Accessibility tree is empty.' }]
+    const snapshot = await page.accessibility.snapshot({ root: root as never })
+    if (!snapshot) return 'Accessibility tree is empty.'
 
-    const formatted = formatAccessibilityNode(snapshot, 0)
-    return [{ type: 'text' as const, text: formatted }]
+    return formatAccessibilityNode(snapshot, 0)
   },
 })
 
-function formatAccessibilityNode(node: any, depth: number): string {
+interface A11yNode {
+  role: string
+  name?: string
+  value?: string | number
+  checked?: boolean | 'mixed'
+  disabled?: boolean
+  children?: A11yNode[]
+}
+
+function formatAccessibilityNode(node: A11yNode, depth: number): string {
   const indent = '  '.repeat(depth)
   let line = `${indent}[${node.role}]`
   if (node.name) line += ` "${node.name}"`
-  if (node.value) line += ` value="${node.value}"`
+  if (node.value !== undefined) line += ` value="${node.value}"`
   if (node.checked !== undefined) line += ` checked=${node.checked}`
   if (node.disabled) line += ` disabled`
 

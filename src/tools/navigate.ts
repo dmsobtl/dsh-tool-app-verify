@@ -1,32 +1,34 @@
+import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { AppSession } from '../session.ts'
 
-export const navigateTool = (session: AppSession) => ({
+export const navigateTool = (session: AppSession) => defineTool({
   name: 'app_navigate',
   description: 'Navigate the page: go to a URL, go back, go forward, or reload.',
   parameters: {
-    type: 'object' as const,
-    properties: {
-      action: { type: 'string' as const, enum: ['goto', 'back', 'forward', 'reload'] as const, description: 'Navigation action' },
-      url: { type: 'string' as const, description: 'URL (required for goto)' },
-    },
-    required: ['action'] as const,
+    action: { type: 'string', required: true, enum: ['goto', 'back', 'forward', 'reload'] as const, description: 'Navigation action' },
+    url: { type: 'string', description: 'URL (required for goto)' },
   },
-  async execute(args: { action: 'goto' | 'back' | 'forward' | 'reload'; url?: string }) {
+  output: {
+    schema: { type: 'string' },
+    render: (_args, value) => [{ type: 'text', text: value }],
+  },
+  async execute(args) {
     const page = await session.getPage()
     switch (args.action) {
-      case 'goto':
-        if (!args.url) return [{ type: 'text' as const, text: 'Error: url is required for goto' }]
+      case 'goto': {
+        if (!args.url) return 'Error: url is required for goto'
         await page.goto(args.url, { waitUntil: 'domcontentloaded' })
-        return [{ type: 'text' as const, text: `Navigated to: ${args.url}` }]
+        return `Navigated to: ${args.url}`
+      }
       case 'back':
         await page.goBack()
-        return [{ type: 'text' as const, text: `Navigated back. Current: ${page.url()}` }]
+        return `Navigated back. Current: ${page.url()}`
       case 'forward':
         await page.goForward()
-        return [{ type: 'text' as const, text: `Navigated forward. Current: ${page.url()}` }]
+        return `Navigated forward. Current: ${page.url()}`
       case 'reload':
         await page.reload()
-        return [{ type: 'text' as const, text: `Reloaded. Current: ${page.url()}` }]
+        return `Reloaded. Current: ${page.url()}`
     }
   },
 })

@@ -1,35 +1,35 @@
+import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { AppSession, LaunchOptions } from '../session.ts'
 
-export const launchTool = (session: AppSession, defaults: LaunchOptions) => ({
+export const launchTool = (session: AppSession, defaults: LaunchOptions, defaultMode?: 'browser' | 'electron') => defineTool({
   name: 'app_launch',
   description: 'Launch a browser (navigates to URL) or an Electron app (opens main.js). Only one session at a time; calling again closes the previous.',
   parameters: {
-    type: 'object' as const,
-    properties: {
-      target: { type: 'string' as const, description: 'URL for browser mode, or path to main.js / app directory for Electron mode' },
-      mode: { type: 'string' as const, enum: ['browser', 'electron'] as const, description: 'Launch mode. Defaults to plugin config.' },
-    },
-    required: ['target'] as const,
+    target: { type: 'string', required: true, description: 'URL for browser mode, or path to main.js / app directory for Electron mode' },
+    mode: { type: 'string', enum: ['browser', 'electron'] as const, description: 'Launch mode. Defaults to plugin config, then inferred from target.' },
   },
-  async execute(args: { target: string; mode?: 'browser' | 'electron' }) {
-    const mode = args.mode ?? (args.target.startsWith('http') ? 'browser' : 'electron')
-    if (mode === 'browser') {
-      const msg = await session.launchBrowser(args.target, defaults)
-      return [{ type: 'text' as const, text: msg }]
-    } else {
-      const msg = await session.launchElectron(args.target, defaults)
-      return [{ type: 'text' as const, text: msg }]
-    }
+  output: {
+    schema: { type: 'string' },
+    render: (_args, value) => [{ type: 'text', text: value }],
+  },
+  async execute(args) {
+    const mode = args.mode ?? defaultMode ?? (args.target.startsWith('http') ? 'browser' : 'electron')
+    if (mode === 'browser') return session.launchBrowser(args.target, defaults)
+    return session.launchElectron(args.target, defaults)
   },
 })
 
-export const closeTool = (session: AppSession) => ({
+export const closeTool = (session: AppSession) => defineTool({
   name: 'app_close',
   description: 'Close the current browser or Electron session and release resources.',
-  parameters: { type: 'object' as const, properties: {} },
+  parameters: {},
+  output: {
+    schema: { type: 'string' },
+    render: (_args, value) => [{ type: 'text', text: value }],
+  },
   async execute() {
-    if (!session.isActive) return [{ type: 'text' as const, text: 'No active session.' }]
+    if (!session.isActive) return 'No active session.'
     await session.close()
-    return [{ type: 'text' as const, text: 'Session closed.' }]
+    return 'Session closed.'
   },
 })
