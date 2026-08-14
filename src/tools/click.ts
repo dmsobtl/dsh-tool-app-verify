@@ -1,6 +1,6 @@
 import { defineTool } from '@deepseek-ai/dsh-tools'
-import type { AppSession } from '../session.ts'
-import { resolveLocator } from '../utils/selectors.ts'
+import type { AppSession } from '../session.js'
+import { resolveLocator } from '../utils/selectors.js'
 
 export const clickTool = (session: AppSession) => defineTool({
   name: 'app_click',

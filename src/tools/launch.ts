@@ -1,5 +1,5 @@
 import { defineTool } from '@deepseek-ai/dsh-tools'
-import type { AppSession, LaunchOptions } from '../session.ts'
+import type { AppSession, LaunchOptions } from '../session.js'
 
 export const launchTool = (session: AppSession, defaults: LaunchOptions, defaultMode?: 'browser' | 'electron') => defineTool({
   name: 'app_launch',

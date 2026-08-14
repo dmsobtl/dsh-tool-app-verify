@@ -2,7 +2,7 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { AttachmentStore, ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
 import { writeFile, mkdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import type { AppSession } from '../session.ts'
+import type { AppSession } from '../session.js'
 
 interface ScreenshotValue {
   attachment: ImageAttachmentRef

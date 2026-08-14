@@ -1,5 +1,5 @@
 import { defineTool } from '@deepseek-ai/dsh-tools'
-import type { AppSession } from '../session.ts'
+import type { AppSession } from '../session.js'
 
 export const navigateTool = (session: AppSession) => defineTool({
   name: 'app_navigate',

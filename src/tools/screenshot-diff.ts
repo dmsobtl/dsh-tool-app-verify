@@ -2,8 +2,8 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { AttachmentStore, ImageAttachmentRef } from '@deepseek-ai/dsh-attachment'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import type { AppSession } from '../session.ts'
-import { diffImages } from '../utils/image-diff.ts'
+import type { AppSession } from '../session.js'
+import { diffImages } from '../utils/image-diff.js'
 
 interface ScreenshotDiffValue {
   pass: boolean
