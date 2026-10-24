@@ -1,6 +1,6 @@
 {
   "name": "dsh-tool-app-verify",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH plugin: browser & Electron UI operation and verification — actions, assertions, and visual regression testing.",
   "type": "module",
   "main": "lib/index.js",
@@ -11,31 +11,43 @@
       "default": "./lib/index.js"
     }
   },
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "vitest run",
     "build": "tsc",
     "prepublishOnly": "tsc"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6"
+    "@deepseek-ai/cordis": "~4.0.5",
+    "@deepseek-ai/dsh-tools": "~0.2.1-rc.2",
+    "@deepseek-ai/dsh-attachment": "~0.2.1-rc.2"
   },
   "dependencies": {
     "playwright": "^1.49.0",
     "pixelmatch": "^6.0.0",
     "pngjs": "^7.0.0",
-    "@deepseek-ai/schemastery": "^3.18.1"
+    "@deepseek-ai/schemastery": "~3.18.5"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
+    "@deepseek-ai/cordis": "~4.0.5",
+    "@deepseek-ai/dsh-tools": "~0.2.1-rc.2",
     "@types/node": "^22.0.0",
     "@types/pngjs": "^6.0.5",
     "@types/pixelmatch": "^5.2.6",
     "typescript": "^5.5.0",
-    "vitest": "^3.0.0"
+    "vitest": "^3.0.0",
+    "@deepseek-ai/dsh-attachment": "~0.2.1-rc.2"
   },
-  "keywords": ["dsh-plugin", "deepseek-harness", "browser", "electron", "testing", "visual-regression", "playwright"],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "browser",
+    "electron",
+    "testing",
+    "visual-regression",
+    "playwright"
+  ],
   "license": "MIT"
 }
